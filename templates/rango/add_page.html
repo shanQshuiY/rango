@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>add page</title>
+</head>
+<body>
+    <form id="page_form" method="post" action="/rango/category/{{ category_slug }}/add_page/">
+           {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+        
+            {% for fields in form.visible_fields %}
+
+                {{ fields.errors }}
+                {{ fields.help_text }}
+                {{ fields }}
+                 <br/>
+            {% endfor %}
+            <input type="submit", name="submit" value="Create Page">
+    </form>
+</body>
+</html>
