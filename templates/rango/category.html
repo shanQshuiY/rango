@@ -7,11 +7,25 @@
 {% block body_block %}
         <h1>{{ category_name }}</h1>
 
+<p>
+
+<strong id="like_count">{{ category.likes }}</strong> people like this category
+
+{% if user.is_authenticated %}
+        <button id="likes" data-catid="{{category.id}}" class="btn btn-primary" type="button">
+        <span class="glyphicon glyphicon-thumbs-up"></span>
+        Like
+        </button>
+{% endif %}
+
+</p>
+
+
         {% if category %}
             {% if pages %}
                 <ul>
                     {% for page in pages %}
-                        <li><a href="{{ page.url }}">{{ page.title }}</a> </li>
+                        <li><a href="{% url 'goto' %}?page_id={{ page.id }}">{{ page.title }}</a> </li>
                     {% endfor %}
 
                 </ul>

@@ -145,6 +145,19 @@ def register(request):
 
     return render(request, 'rango/register.html', context_dic)
 
+
+def goto(request):
+    print 'goto'
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+            page = Page.objects.get(id = page_id)
+            page.views += 1
+            page.save()
+            print page.views
+            return HttpResponseRedirect(page.url)
+    return index(request)
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -178,3 +191,43 @@ def user_logout(request):
 
     # Take the user back to the homepage.
     return HttpResponseRedirect('/rango/')
+
+
+@login_required
+def like_category(request):
+
+    cat_id = None
+    if request.method == 'GET':
+        cat_id = request.GET['category_id']
+
+    likes = 0
+    if cat_id:
+        cat = Category.objects.get(id=int(cat_id))
+        if cat:
+            likes = cat.likes + 1
+            cat.likes =  likes
+            cat.save()
+
+    return HttpResponse(likes)
+
+def get_category_list(max_results=0, starts_with=''):
+        cat_list = []
+        if starts_with:
+            cat_list = Category.objects.filter(name__istartswith=starts_with)
+
+        if cat_list and max_results > 0:
+            if cat_list.count() > max_results:
+                cat_list = cat_list[:max_results]
+
+        return cat_list
+
+
+def suggest_category(request):
+    cat_list = []
+    starts_with = ''
+    if request.method == 'GET':
+        starts_with = request.GET['suggestion']
+
+    cat_list = get_category_list(8, starts_with)
+    print cat_list
+    return render(request, 'rango/cats.html', {'cats': cat_list})
